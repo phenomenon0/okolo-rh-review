@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Independent Mathematical Audit of Okolo’s Riemann Hypothesis Proof</title>
+<meta name="description" content="Primary-source mathematical audit of H. P. Okolo's July 15, 2026 Zenodo manuscript (HDF_CRITICAL_EXPONENT.pdf): why Theorem 6 is circular, 10 verified errors (7 missed by ChatGPT's review), exact counterexamples, and comparison with Levent Alpöge's Lean-verified proof.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Did Okolo Solve the Riemann Hypothesis? An Independent Primary-Source Audit">
+<meta property="og:description" content="Decrypted directly from Zenodo DOI 10.5281/zenodo.21381824. Full line-by-line mathematical verification, 10 concrete errors, Davenport-Heilbronn off-line zero check, and comparison with Alpöge's Lean proof.">
+<meta property="og:url" content="https://phenomenon0.github.io/okolo-rh-review/">
+<meta property="og:image" content="https://phenomenon0.github.io/okolo-rh-review/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Did Okolo Solve the Riemann Hypothesis? Independent Mathematical Audit">
+<meta name="twitter:description" content="Line-by-line primary-source verification of Okolo's decrypted July 2026 Zenodo PDF: the fatal circularity in Theorem 6, 10 verified mathematical errors, and comparison with Levent Alpöge's Lean-verified proof.">
+<meta name="twitter:image" content="https://phenomenon0.github.io/okolo-rh-review/og.png">
+<style>
+  :root {
+    --bg: #faf9f5;
+    --surface: #ffffff;
+    --surface-tint: #f3f1ea;
+    --ink: #18181b;
+    --muted: #52525b;
+    --rule: #e4e2d8;
+    --accent: #0f5c4c;
+    --accent-soft: #e6f2ef;
+    --crimson: #9f1239;
+    --crimson-soft: #fdf2f4;
+    --amber: #92400e;
+    --amber-soft: #fef8e7;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    --serif: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, Cambria, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.68;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  a:hover { color: #093d32; }
+
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 22px 84px;
+  }
+
+  /* Header / Masthead */
+  .masthead {
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 0 14px;
+    margin-bottom: 36px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .masthead strong { color: var(--accent); font-weight: 700; }
+  .masthead-actions { display: flex; gap: 10px; align-items: center; }
+  .btn-chip {
+    appearance: none;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .btn-chip:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+  /* Hero */
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4.4vw, 3.05rem);
+    line-height: 1.14;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    color: #111113;
+  }
+  .deck {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    line-height: 1.55;
+    color: #3f3f46;
+    margin: 0 0 28px;
+  }
+
+  /* Verdict Callout */
+  .verdict-box {
+    background: var(--crimson-soft);
+    border: 1px solid #f4c7d2;
+    border-left: 5px solid var(--crimson);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 30px;
+  }
+  .verdict-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    margin-bottom: 6px;
+  }
+  .verdict-box p { margin: 0; font-size: 1.03rem; color: #2d1118; }
+
+  /* Key metrics strip */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 26px 0 38px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 15px 16px;
+  }
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .stat-num.crimson { color: var(--crimson); }
+  .stat-num.accent { color: var(--accent); }
+  .stat-label {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 5px;
+    line-height: 1.35;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 42px;
+    font-size: 14px;
+  }
+  .toc-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .toc ol {
+    margin: 0;
+    padding-left: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 4px 20px;
+  }
+  .toc li { margin: 2px 0; }
+
+  /* Headings & Sections */
+  section { margin-top: 48px; }
+  h2 {
+    font-family: var(--serif);
+    font-size: 1.65rem;
+    line-height: 1.25;
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+    color: #111113;
+  }
+  h3 {
+    font-size: 1.08rem;
+    line-height: 1.35;
+    margin: 24px 0 8px;
+    color: var(--ink);
+  }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  /* Math typography */
+  .math {
+    font-family: var(--serif);
+    font-style: italic;
+    white-space: nowrap;
+  }
+  .math-rm { font-style: normal; }
+  .eq-block {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 9px;
+    padding: 15px 18px;
+    margin: 16px 0 18px;
+    font-family: var(--serif);
+    font-size: 1.08rem;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .eq-block.fail {
+    background: var(--crimson-soft);
+    border-color: #f4c7d2;
+  }
+  .eq-block.ok {
+    background: var(--accent-soft);
+    border-color: #c2dfd7;
+  }
+  .eq-caption {
+    display: block;
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* Quote block */
+  blockquote {
+    margin: 16px 0;
+    padding: 14px 18px;
+    background: var(--surface-tint);
+    border-left: 4px solid #a1a1aa;
+    border-radius: 0 8px 8px 0;
+    font-family: var(--serif);
+    font-size: 0.99rem;
+    color: #27272a;
+  }
+  blockquote cite {
+    display: block;
+    margin-top: 6px;
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Figure / SVG frames */
+  figure {
+    margin: 24px 0 28px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 18px 18px 14px;
+  }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--rule);
+    line-height: 1.5;
+  }
+
+  /* Tables */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 18px 0 24px;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  th, td {
+    text-align: left;
+    padding: 11px 13px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  th {
+    background: var(--surface-tint);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #3f3f46;
+    font-weight: 700;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .badge-new { background: var(--crimson-soft); color: var(--crimson); border: 1px solid #f4c7d2; }
+  .badge-verified { background: var(--accent-soft); color: var(--accent); border: 1px solid #c2dfd7; }
+  .badge-warn { background: var(--amber-soft); color: var(--amber); border: 1px solid #f2dca6; }
+
+  /* Two-column compare cards */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 20px 0 24px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .card h3 { margin-top: 0; font-family: var(--serif); font-size: 1.12rem; }
+  .card.left { border-top: 4px solid var(--crimson); }
+  .card.right { border-top: 4px solid var(--accent); }
+
+  /* Code & Receipts */
+  code {
+    font-family: var(--mono);
+    font-size: 0.87em;
+    background: var(--surface-tint);
+    padding: 2px 5px;
+    border-radius: 4px;
+  }
+  pre {
+    background: #14161a;
+    color: #e4e7ec;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.55;
+    padding: 16px 18px;
+    border-radius: 10px;
+    overflow-x: auto;
+    margin: 14px 0 20px;
+  }
+  .hl-pass { color: #5eead4; font-weight: 700; }
+  .hl-head { color: #93c5fd; font-weight: 700; }
+  .hl-warn { color: #fda4af; }
+
+  /* Error detail cards */
+  .error-list {
+    display: grid;
+    gap: 14px;
+    margin: 18px 0;
+  }
+  .err-card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .err-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .err-title { font-weight: 700; font-size: 0.98rem; color: var(--ink); }
+  .err-loc { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .err-card p:last-child { margin-bottom: 0; }
+
+  /* Summary footer card */
+  .summary-box {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-top: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 22px 24px;
+    margin-top: 40px;
+  }
+  .summary-box h2 { border: none; padding: 0; margin-bottom: 12px; }
+
+  footer {
+    margin-top: 52px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  @media (max-width: 720px) {
+    .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .compare-grid { grid-template-columns: 1fr; }
+    .wrap { padding: 0 16px 64px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+
+  <header class="masthead">
+    <div><strong>Independent Mathematical Audit</strong> &middot; Primary-Source Verification &middot; 25 November 2026</div>
+    <div class="masthead-actions">
+      <a class="btn-chip" href="verify.py">verify.py</a>
+      <button class="btn-chip" id="copyBtn" type="button" onclick="copyShareUrl()">Copy Share Link</button>
+    </div>
+  </header>
+
+  <h1>Did Okolo Solve the Riemann Hypothesis?</h1>
+  <p class="deck">
+    An independent, line-by-line audit of Hanyelichukwu Paul Okolo’s decrypted July 15, 2026 Zenodo manuscript
+    (<em>The Harmonic Divisor Fan and the Critical Exponent</em>), tested with reproducible Python counterexamples
+    and compared directly against Levent Alpöge’s Lean-verified proof and ChatGPT’s review PDF.
+  </p>
+
+  <div class="verdict-box">
+    <span class="verdict-tag">Verdict</span>
+    <p>
+      <strong>No.</strong> Okolo’s 22-page manuscript does not prove the Riemann Hypothesis, and it shares
+      <strong>zero mathematical mechanism</strong> with Levent Alpöge’s November 2026 Lean-verified proof.
+      Its central confinement proof (Theorem 6, p.&nbsp;21) is fatally circular—assuming the very critical-line
+      exponent it claims to derive—and the manuscript contains <strong>10 concrete mathematical errors</strong>,
+      including <strong>7 errors missed by ChatGPT’s review</strong>.
+    </p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-num">22 pp.</div>
+      <div class="stat-label">Decrypted Zenodo PDF audited line-by-line (MD5 verified)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num crimson">10</div>
+      <div class="stat-label">Verified mathematical errors &amp; fatal circularity</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num crimson">7</div>
+      <div class="stat-label">Additional errors found independently beyond ChatGPT’s PDF</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num accent">7 / 7</div>
+      <div class="stat-label">Machine-checked tests passing in stdlib <code>verify.py</code></div>
+    </div>
+  </div>
+
+  <nav class="toc" aria-label="Contents">
+    <div class="toc-title">Audit Contents</div>
+    <ol>
+      <li><a href="#sources">Primary Sources Audited</a></li>
+      <li><a href="#circularity">The Fatal Circularity in Theorem 6</a></li>
+      <li><a href="#counterexamples">Hard Number-Theoretic Counterexamples</a></li>
+      <li><a href="#errors">All 10 Verified Mathematical Errors</a></li>
+      <li><a href="#alpoge">Plagiarism Check vs. Levent Alpöge’s Proof</a></li>
+      <li><a href="#chatgpt">Independent Check of ChatGPT’s Review</a></li>
+      <li><a href="#reproduce">Reproducible Python Verification</a></li>
+      <li><a href="#summary">Summary</a></li>
+    </ol>
+  </nav>
+
+  <!-- SECTION 1 -->
+  <section id="sources">
+    <h2>1. Primary Sources Audited</h2>
+    <p>
+      Rather than relying on second-hand summaries or ChatGPT’s PDF critique, every citation and check below comes directly
+      from the primary documents:
+    </p>
+    <ul>
+      <li>
+        <strong>Okolo’s July 15, 2026 Zenodo Deposit:</strong>
+        <a href="https://doi.org/10.5281/zenodo.21381824" target="_blank" rel="noopener">DOI 10.5281/zenodo.21381824</a>
+        (<em>The HDF lattice and the Riemann Hypothesis: An Exact Automorphism</em>, file
+        <code>HDF_CRITICAL_EXPONENT.pdf.aes</code>, 564,103 bytes, MD5 <code>af82fd7f388755c8db5d65e6d1d99625</code>).
+        Decrypted via AESCrypt v2 with the author’s published key <code>99hUeDd6ZNxkHMS</code> into the 22-page PDF
+        internally titled <em>The Harmonic Divisor Fan and the Critical Exponent</em> (PDF creation timestamp
+        <code>2026-07-15 11:03:16 CDT</code>).
+      </li>
+      <li>
+        <strong>Okolo’s X Posts:</strong>
+        November 24 key release (<a href="https://x.com/HanyelPaulOkolo/status/2125370998572855573" target="_blank" rel="noopener">status/2125370998572855573</a>, stating the proof was derived with Claude 4.8/5.0 on July 12, 2026) and November 25 hand-drawn diagram post (<a href="https://x.com/HanyelPaulOkolo/status/2125607688956424374" target="_blank" rel="noopener">status/2125607688956424374</a>, showing a hand-drawn divisor sieve diagram and a screenshot of a restricted July 22 Zenodo upload—no proof text).
+      </li>
+      <li>
+        <strong>Levent Alpöge’s Proof Note &amp; Formal Verification:</strong>
+        <a href="https://alpo.ge/remark.pdf" target="_blank" rel="noopener">alpo.ge/remark.pdf</a> (released Nov 20, 2026)
+        and the joint certification by the Lean FRO and Mathlib Initiative
+        (<a href="https://leanprover-community.github.io/blog/posts/riemann-hypothesis/" target="_blank" rel="noopener">Lean community blog</a>, Nov 21, 2026).
+      </li>
+    </ul>
+    <p>
+      <strong>Structural observation on Okolo’s manuscript:</strong> The 22-page PDF is incomplete as assembled—<strong>Part II is entirely missing</strong> (jumping directly from Part I on p.&nbsp;7 to Part III on p.&nbsp;8), and p.&nbsp;22 cites a nonexistent <code>§3.6</code> (Part III ends at §3.5).
+    </p>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section id="circularity">
+    <h2>2. The Fatal Circularity in Theorem 6</h2>
+    <p>
+      Okolo’s manuscript builds five pieces:
+      <strong>Part 0</strong> (pp.&nbsp;1–3) enumerates divisor pairs via the bijection <span class="math">(k, m) &#8614; (mk, k)</span>—literally the geometric Sieve of Eratosthenes / Dirichlet’s 1849 divisor hyperbola.
+      <strong>Part I</strong> (pp.&nbsp;4–7) notes that the pairing <span class="math">d &#8614; x/d</span> reflects exponents <span class="math">&beta; = log d / log x</span> via <span class="math">&beta; &#8614; 1 &minus; &beta;</span>, whose fixed midpoint is <span class="math">&beta; = &frac12;</span>.
+      <strong>Part III</strong> (pp.&nbsp;8–12) attempts to build a self-adjoint dilation operator whose continuous spectrum is <span class="math"><span class="math-rm">Re</span>(s) = &frac12;</span>.
+      <strong>Part IV</strong> (pp.&nbsp;13–16) reproduces Riemann’s classical 1859 Mellin transform of <span class="math">e<sup>&minus;&pi;n&sup2;t</sup></span> to recover completed zeta <span class="math">&xi;(s) = &pi;<sup>&minus;s/2</sup>&Gamma;(s/2)&zeta;(s)</span>.
+      <strong>Part V</strong> (pp.&nbsp;17–22) claims to close the Riemann Hypothesis via Theorem 5.3 ("spiral non-fault-tolerance") and Theorem 6 ("confinement").
+    </p>
+    <p>
+      <strong>What Theorem 5.3 actually proves</strong> is an elementary calculus remark: if a mode has envelope <span class="math">x<sup>&beta;</sup> = e<sup>&beta;u</sup></span> (<span class="math">u = log x</span>) and you change <span class="math">&beta;</span> to <span class="math">&beta; + &varepsilon;</span> (<span class="math">&varepsilon; &ne; 0</span>), the ratio <span class="math">e<sup>&varepsilon;u</sup> &ne; 1</span> alters the function. That holds for <strong>every</strong> starting exponent <span class="math">&beta;</span>—it says nothing about what the original <span class="math">&beta;</span> equals.
+    </p>
+
+    <blockquote>
+      “A fixed object has fixed spectral data: a configuration with a zero off the line is the spectrum of a different object, not of &zeta;. Hence the zeros are not perturbable and their common real part is a coordinate of a rigid object, not a free parameter; by Theorem 5.3 any other envelope exponent reconstructs a different point set, with an error that grows without bound and cannot cancel, so it is not &zeta;’s spectrum at all. <strong>By Parts I and III the reconstructing exponent of &zeta; is &frac12;.</strong> Therefore every nontrivial zero has real part &frac12;.”
+      <cite>— H. P. Okolo, <em>HDF_CRITICAL_EXPONENT.pdf</em>, Theorem 6 (p.&nbsp;21)</cite>
+    </blockquote>
+
+    <p>
+      That bolded sentence is <strong>literally the Riemann Hypothesis asserted without proof</strong>. Neither Part I nor Part III establishes that the zeros of <span class="math">&zeta;(s)</span> all have real part <span class="math">&frac12;</span>—and Okolo’s own text explicitly admits this on p.&nbsp;12 (<em>“What is not proved in this part is that the shared value is forced to be &frac12; for every zero”</em>) and p.&nbsp;18 (<em>“What Proposition 5.1 does not by itself establish is the location of those common zeros”</em>).
+    </p>
+
+    <figure>
+      <svg viewBox="0 0 820 285" role="img" aria-label="Flowchart of the circular loop in Theorem 6">
+        <defs>
+          <marker id="arr-gray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#71717a"/>
+          </marker>
+          <marker id="arr-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#9f1239"/>
+          </marker>
+        </defs>
+
+        <!-- Box 1 -->
+        <rect x="16" y="24" width="235" height="108" rx="10" fill="#faf9f5" stroke="#d4d2c7" stroke-width="1.5"/>
+        <text x="32" y="49" font-size="11" font-weight="700" fill="#0f5c4c" letter-spacing="0.06em">PARTS I, III &amp; &sect;5.2</text>
+        <text x="32" y="72" font-size="13.5" font-weight="700" fill="#18181b">Midpoint &amp; Continuous Line</text>
+        <text x="32" y="92" font-size="12" fill="#52525b">Explicitly defer zero placement:</text>
+        <text x="32" y="109" font-size="11.5" font-style="italic" fill="#52525b">“Not proved in this part… deferred</text>
+        <text x="32" y="123" font-size="11.5" font-style="italic" fill="#52525b">to Part V.” (pp. 12, 18)</text>
+
+        <!-- Arrow 1 -> 2 -->
+        <line x1="251" y1="78" x2="292" y2="78" stroke="#71717a" stroke-width="1.8" marker-end="url(#arr-gray)"/>
+
+        <!-- Box 2 -->
+        <rect x="298" y="24" width="224" height="108" rx="10" fill="#faf9f5" stroke="#d4d2c7" stroke-width="1.5"/>
+        <text x="314" y="49" font-size="11" font-weight="700" fill="#0f5c4c" letter-spacing="0.06em">PART V &middot; THEOREM 5.3</text>
+        <text x="314" y="72" font-size="13.5" font-weight="700" fill="#18181b">Perturbing Any &beta; Changes f</text>
+        <text x="314" y="92" font-size="12" fill="#52525b">Replacing x<tspan dy="-4" font-size="9">&beta;</tspan><tspan dy="4"> by x</tspan><tspan dy="-4" font-size="9">&beta;+&epsilon;</tspan><tspan dy="4"> multiplies</tspan></text>
+        <text x="314" y="109" font-size="12" fill="#52525b">amplitude by e<tspan dy="-4" font-size="9">&epsilon;u</tspan><tspan dy="4"> &ne; 1.</tspan></text>
+        <text x="314" y="124" font-size="11.5" font-weight="600" fill="#92400e">True for ANY starting &beta;!</text>
+
+        <!-- Arrow 2 -> 3 -->
+        <line x1="522" y1="78" x2="562" y2="78" stroke="#71717a" stroke-width="1.8" marker-end="url(#arr-gray)"/>
+
+        <!-- Box 3 -->
+        <rect x="568" y="24" width="236" height="108" rx="10" fill="#fdf2f4" stroke="#e11d48" stroke-width="2"/>
+        <text x="584" y="49" font-size="11" font-weight="800" fill="#9f1239" letter-spacing="0.06em">PART V &middot; THEOREM 6 (P. 21)</text>
+        <text x="584" y="72" font-size="13.5" font-weight="700" fill="#18181b">Circular Leap (Petitio Principii)</text>
+        <text x="584" y="92" font-size="11.8" font-style="italic" fill="#2d1118">“By Parts I and III the</text>
+        <text x="584" y="108" font-size="11.8" font-style="italic" fill="#2d1118">reconstructing exponent of &zeta; is &frac12;.”</text>
+        <text x="584" y="124" font-size="11.5" font-weight="700" fill="#9f1239">&rArr; Assumes RH to prove RH</text>
+
+        <!-- Circular return arrow -->
+        <path d="M 686 132 L 686 226 Q 686 244 668 244 L 152 244 Q 134 244 134 226 L 134 138"
+              fill="none" stroke="#9f1239" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#arr-red)"/>
+        <rect x="242" y="220" width="336" height="44" rx="8" fill="#fdf2f4" stroke="#f4c7d2" stroke-width="1.5"/>
+        <text x="410" y="238" text-anchor="middle" font-size="12" font-weight="700" fill="#9f1239">UNBRIDGED GAP: CIRCULAR DEPENDENCY</text>
+        <text x="410" y="255" text-anchor="middle" font-size="11.5" fill="#52525b">Parts I &amp; III deferred placement to Part V; Theorem 6 cites Parts I &amp; III to fix &beta; = &frac12;.</text>
+      </svg>
+      <figcaption>
+        <strong>Figure 1 — The circular dependency in Okolo’s proof.</strong>
+        If &zeta;(s) hypothetically possessed a symmetric off-line pair at &beta; = 0.7 and 1&minus;&beta; = 0.3 in its original spectrum,
+        every unconditional statement in Parts 0–V would remain true: &psi;(x) would still be fixed by the primes, unique factorization
+        would still hold, divisor reflection would still center on &frac12;, &xi;(s)=&xi;(1&minus;s) would still hold, and perturbing
+        0.7 &rarr; 0.7 + &varepsilon; would still violate reconstruction by Theorem 5.3.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- SECTION 3 -->
+  <section id="counterexamples">
+    <h2>3. Hard Number-Theoretic Counterexamples</h2>
+    <p>
+      ChatGPT’s review illustrated the logical gap with the toy function <span class="math">F(x) = x<sup>1/4</sup> + x<sup>3/4</sup></span>.
+      In analytic number theory, far stronger <strong>genuine zeta-function counterexamples</strong> refute Okolo’s entire Parts I–V architecture outright:
+    </p>
+    <ol>
+      <li>
+        <strong>Davenport–Heilbronn (1936) &amp; Epstein Zeta Functions:</strong>
+        The Davenport–Heilbronn Dirichlet series <span class="math">f(s)</span> (and Epstein zeta functions <span class="math">&zeta;<sub>Q</sub>(s)</span> of positive definite binary quadratic forms with class number &gt; 1, such as <span class="math">Q(m,n) = m&sup2; + 5n&sup2;</span>) arise directly from Gaussian lattice heat-kernel Mellin transforms with Jacobi theta inversion and satisfy the <strong>exact</strong> completed functional equation <span class="math">&Lambda;(s) = &Lambda;(1 &minus; s)</span>—yet <strong>have infinitely many zeros off the critical line <span class="math"><span class="math-rm">Re</span>(s) = &frac12;</span></strong>.
+        Using pure Python in <a href="verify.py"><code>verify.py</code></a>, we independently verified the Davenport–Heilbronn functional equation to <span class="math">4.6 &times; 10<sup>&minus;16</sup></span> and located an explicit symmetric off-line zero pair at
+        <span class="math">&rho; &approx; 0.8085171825 + 85.6993484854i</span> and <span class="math">1 &minus; &rho;&#772; &approx; 0.1914828175 + 85.6993484854i</span>.
+      </li>
+      <li>
+        <strong>Beurling Generalized Primes (Diamond–Montgomery–Vorhauer, 2006):</strong>
+        Beurling generalized integers form a free commutative multiplicative monoid—so they satisfy <strong>exact unique factorization</strong>, generate the <strong>exact same divisor lattice and frog bijection</strong> <span class="math">(k, m) &#8614; (mk, k)</span>, obey the <strong>exact same divisor involution</strong> <span class="math">d &#8614; x/d</span> with unique fixed midpoint <span class="math">&beta; = &frac12;</span>, and have a fixed Chebyshev explicit formula—yet Diamond, Montgomery, and Vorhauer proved there exist Beurling prime systems whose zeta functions <strong>violate the Riemann Hypothesis</strong>.
+      </li>
+    </ol>
+
+    <figure>
+      <svg viewBox="0 0 820 265" role="img" aria-label="Symmetry about 1/2 does not force elements onto 1/2">
+        <!-- Left Panel: Divisors of 16 -->
+        <rect x="12" y="14" width="382" height="236" rx="10" fill="#faf9f5" stroke="#e4e2d8" stroke-width="1.4"/>
+        <text x="30" y="40" font-size="11" font-weight="700" fill="#0f5c4c" letter-spacing="0.06em">PART I &middot; DIVISOR REFLECTION (&beta; &harr; 1&minus;&beta;)</text>
+        <text x="30" y="61" font-size="14" font-weight="700" fill="#18181b">Divisors of 16 on Log Scale</text>
+
+        <!-- Number line -->
+        <line x1="48" y1="145" x2="358" y2="145" stroke="#a1a1aa" stroke-width="2"/>
+        <!-- Midpoint dashed line -->
+        <line x1="203" y1="86" x2="203" y2="195" stroke="#0f5c4c" stroke-width="1.6" stroke-dasharray="4 4"/>
+        <!-- Reflection arc between 2 and 8 -->
+        <path d="M 125.5 135 Q 203 82 280.5 135" fill="none" stroke="#9f1239" stroke-width="1.8" stroke-dasharray="5 3"/>
+        <text x="203" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="#9f1239">reflected pair: &frac14; + &frac34; = 1</text>
+
+        <!-- Points -->
+        <circle cx="48" cy="145" r="5" fill="#71717a"/>
+        <text x="48" y="130" text-anchor="middle" font-size="12" fill="#52525b">1</text>
+        <text x="48" y="168" text-anchor="middle" font-size="12" fill="#71717a">0</text>
+
+        <circle cx="125.5" cy="145" r="6.5" fill="#9f1239"/>
+        <text x="125.5" y="128" text-anchor="middle" font-size="13" font-weight="700" fill="#9f1239">2</text>
+        <text x="125.5" y="168" text-anchor="middle" font-size="12" font-weight="700" fill="#9f1239">&frac14;</text>
+
+        <circle cx="203" cy="145" r="6.5" fill="#0f5c4c"/>
+        <text x="203" y="128" text-anchor="middle" font-size="13" font-weight="700" fill="#0f5c4c">4</text>
+        <text x="203" y="168" text-anchor="middle" font-size="12" font-weight="700" fill="#0f5c4c">&frac12;</text>
+
+        <circle cx="280.5" cy="145" r="6.5" fill="#9f1239"/>
+        <text x="280.5" y="128" text-anchor="middle" font-size="13" font-weight="700" fill="#9f1239">8</text>
+        <text x="280.5" y="168" text-anchor="middle" font-size="12" font-weight="700" fill="#9f1239">&frac34;</text>
+
+        <circle cx="358" cy="145" r="5" fill="#71717a"/>
+        <text x="358" y="130" text-anchor="middle" font-size="12" fill="#52525b">16</text>
+        <text x="358" y="168" text-anchor="middle" font-size="12" fill="#71717a">1</text>
+
+        <text x="203" y="216" text-anchor="middle" font-size="11.5" fill="#52525b">Symmetry fixes the midpoint &frac12;, yet</text>
+        <text x="203" y="232" text-anchor="middle" font-size="11.5" fill="#52525b">divisors 2 and 8 sit off &frac12; in symmetric pairs.</text>
+
+        <!-- Right Panel: Davenport-Heilbronn Off-Line Zeros -->
+        <rect x="412" y="14" width="396" height="236" rx="10" fill="#faf9f5" stroke="#e4e2d8" stroke-width="1.4"/>
+        <text x="430" y="40" font-size="11" font-weight="700" fill="#9f1239" letter-spacing="0.06em">VERIFIED COUNTEREXAMPLE &middot; &Lambda;<tspan dy="3" font-size="8.5">DH</tspan><tspan dy="-3">(s) = &Lambda;</tspan><tspan dy="3" font-size="8.5">DH</tspan><tspan dy="-3">(1&minus;s)</tspan></text>
+        <text x="430" y="61" font-size="14" font-weight="700" fill="#18181b">Davenport–Heilbronn Off-Line Zero Pair</text>
+
+        <!-- Critical strip -->
+        <rect x="466" y="84" width="286" height="112" fill="#ffffff" stroke="#d4d2c7" stroke-width="1.2"/>
+        <!-- Re=0, Re=1/2, Re=1 -->
+        <line x1="609" y1="84" x2="609" y2="196" stroke="#0f5c4c" stroke-width="1.8" stroke-dasharray="4 4"/>
+        <text x="466" y="211" text-anchor="middle" font-size="11" fill="#71717a">Re(s)=0</text>
+        <text x="609" y="211" text-anchor="middle" font-size="11" font-weight="700" fill="#0f5c4c">Re(s)=&frac12;</text>
+        <text x="752" y="211" text-anchor="middle" font-size="11" fill="#71717a">Re(s)=1</text>
+
+        <!-- Off-line pair at 0.1915 and 0.8085 -->
+        <!-- x = 466 + 0.19148*286 = 520.8 ; x = 466 + 0.80852*286 = 697.2 -->
+        <line x1="521" y1="138" x2="697" y2="138" stroke="#9f1239" stroke-width="1.6" stroke-dasharray="4 3"/>
+        <circle cx="521" cy="138" r="6.5" fill="#9f1239"/>
+        <circle cx="697" cy="138" r="6.5" fill="#9f1239"/>
+
+        <text x="521" y="121" text-anchor="middle" font-size="11" font-weight="700" fill="#9f1239">0.1915 + 85.70i</text>
+        <text x="697" y="121" text-anchor="middle" font-size="11" font-weight="700" fill="#9f1239">0.8085 + 85.70i</text>
+        <text x="609" y="162" text-anchor="middle" font-size="11" fill="#52525b">|f(&rho;)| = 3.4&times;10<tspan dy="-3" font-size="8.5">&minus;14</tspan><tspan dy="3">, |f(1&minus;&rho;)| = 2.2&times;10</tspan><tspan dy="-3" font-size="8.5">&minus;13</tspan></text>
+        <text x="609" y="182" text-anchor="middle" font-size="11" fill="#0f5c4c">|&Lambda;(s)&minus;&Lambda;(1&minus;s)| = 4.6&times;10<tspan dy="-3" font-size="8.5">&minus;16</tspan></text>
+
+        <text x="610" y="232" text-anchor="middle" font-size="11.5" fill="#52525b">Exact s &harr; 1&minus;s symmetry does NOT confine zeros to &frac12;.</text>
+      </svg>
+      <figcaption>
+        <strong>Figure 2 — Reflection symmetry about &frac12; permits off-line pairs.</strong>
+        Left: Okolo’s divisor involution &beta; &harr; 1&minus;&beta; reflects pairs symmetrically about &frac12; without forcing divisors onto &frac12;.
+        Right: A genuine analytic Dirichlet series (Davenport–Heilbronn, 1936) satisfying the exact completed functional equation
+        &Lambda;<sub>DH</sub>(s) = &Lambda;<sub>DH</sub>(1&minus;s), verified directly in <code>verify.py</code> to have zeros at
+        Re(&rho;) &approx; 0.8085 and 0.1915.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- SECTION 4 -->
+  <section id="errors">
+    <h2>4. Complete Line-by-Line Audit: All 10 Verified Errors</h2>
+    <p>
+      Auditing every lemma and theorem across all 22 pages of <code>HDF_CRITICAL_EXPONENT.pdf</code> confirms all four technical issues flagged in ChatGPT’s review PDF <strong>and uncovers seven additional mathematical errors that ChatGPT missed</strong>:
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>Manuscript Claim</th>
+            <th>Independent Verification</th>
+            <th>ChatGPT PDF</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Part I, Thm 1</strong><br><span class="err-loc">pp. 4–6</span></td>
+            <td>The fixed midpoint <span class="math">&beta; = &frac12;</span> of <span class="math">d &#8614; x/d</span> is “forced by unique factorization.”</td>
+            <td><strong>False.</strong> <span class="math">d &middot; (x/d) = x</span> and geometric mean <span class="math">&radic;x</span> hold in non-UFD rings (e.g., <span class="math">&#8484;[&radic;&minus;5]</span>) and on all of <span class="math">&#8477;<sub>+</sub></span>.</td>
+            <td><span class="badge badge-new">Missed</span></td>
+          </tr>
+          <tr>
+            <td><strong>Part I, &sect;1.4</strong><br><span class="err-loc">p. 5</span></td>
+            <td>For squarefree <span class="math">n</span>, <span class="math">|S|/k</span> is “equivalently <span class="math">log d / log n</span>.”</td>
+            <td><strong>False.</strong> For <span class="math">n = 30 = 2&middot;3&middot;5</span> and <span class="math">d = 5</span>: <span class="math">|S|/k = 0.333333</span> vs. <span class="math">log 5 / log 30 = 0.473197</span>.</td>
+            <td><span class="badge badge-new">Missed</span></td>
+          </tr>
+          <tr>
+            <td><strong>Part III, Lem 3.4</strong><br><span class="err-loc">pp. 8–9</span></td>
+            <td>Under <span class="math">u = log x</span>, <span class="math">&minus;i(u d/du + &frac12;) = &minus;i(x d/dx + &frac12;)</span>.</td>
+            <td><strong>Algebra blunder.</strong> Substituting <span class="math">d/du = x d/dx</span> silently <strong>drops the leading factor <span class="math">u = log x</span></strong>. The true operator is <span class="math">&minus;i(x log x &middot; d/dx + &frac12;)</span>. On <span class="math">f(x)=x</span> at <span class="math">x=e&sup2;</span>: <span class="math">&minus;18.473i</span> vs. <span class="math">&minus;11.084i</span>.</td>
+            <td><span class="badge badge-new">Missed</span></td>
+          </tr>
+          <tr>
+            <td><strong>Part III, Thm 3</strong><br><span class="err-loc">p. 9</span></td>
+            <td><span class="math">H = &minus;i(x d/dx + &frac12;)</span> is self-adjoint on <span class="math">L&sup2;(&#8477;<sub>+</sub>, dx/x)</span>; the &frac12;-shift is “absorbed by the measure.”</td>
+            <td><strong>False.</strong> Under <span class="math">u = log x</span>, <span class="math">du = dx/x</span> is already isometric—no Jacobian absorbs <span class="math">+&frac12;</span>, leaving <span class="math">H = &minus;i d/du &minus; i/2</span>. On unit-norm real <span class="math">g(u) = &pi;<sup>&minus;1/4</sup>e<sup>&minus;u&sup2;/2</sup></span>, <span class="math">&langle;g, Hg&rangle;<sub>dx/x</sub> = &minus;0.5i &notin; &#8477;</span>.</td>
+            <td><span class="badge badge-verified">Caught</span></td>
+          </tr>
+          <tr>
+            <td><strong>Part III, Thm 3</strong><br><span class="err-loc">p. 9</span></td>
+            <td><span class="math">|x<sup>&minus;s</sup>|&sup2; dx/x = x<sup>&minus;2Re(s)&minus;1</sup>dx</span> is scale-invariant at <span class="math"><span class="math-rm">Re</span>(s) = &frac12;</span>; Mellin sends <span class="math">H</span> to multiplication by <span class="math">s</span>.</td>
+            <td><strong>Two more errors.</strong> (1) Scale-invariance requires <span class="math">&minus;2Re(s)&minus;1 = &minus;1 &rArr; Re(s) = 0</span>, not <span class="math">&frac12;</span> (at <span class="math">&frac12;</span> it yields <span class="math">dx/x&sup2;</span>). (2) Integration by parts gives <span class="math">&#8499;(Hf)(s) = i(s&minus;&frac12;)&#8499;f(s) = &minus;t &#8499;f</span> on <span class="math">s=&frac12;+it</span>, not <span class="math">s</span>; and <span class="math">&#8499;</span> is unitary on <span class="math">Re(s)=&frac12;</span> from <span class="math">L&sup2;(dx)</span>, not <span class="math">L&sup2;(dx/x)</span>.</td>
+            <td><span class="badge badge-new">Missed</span></td>
+          </tr>
+          <tr>
+            <td><strong>Part III, &sect;3.4</strong><br><span class="err-loc">p. 11</span></td>
+            <td><span class="math">V(t) = &sum;<sub>p</sub> (log p)p<sup>&minus;1/2</sup>sin(t log p) = <span class="math-rm">Im</span>[&minus;&zeta;&prime;/&zeta;(&frac12;+it)]</span>.</td>
+            <td><strong>Triple error.</strong> Wrong sign (<span class="math">p<sup>&minus;it</sup> = cos &minus; i sin</span>), omits all prime powers <span class="math">p<sup>k</sup></span> (<span class="math">k &ge; 2</span>), and the Dirichlet series diverges on <span class="math">Re(s) = &frac12;</span>. Checked at <span class="math">s = 2+i</span>: true <span class="math">&minus;0.3895</span> vs. Okolo <span class="math">+0.3274</span>.</td>
+            <td><span class="badge badge-new">Missed</span></td>
+          </tr>
+          <tr>
+            <td><strong>Part IV, Lem 4.1–Thm 4</strong><br><span class="err-loc">pp. 13–14</span></td>
+            <td>Gaussian is the “unique scale-invariant kernel”; frog diffusion on log-line yields <span class="math">e<sup>&minus;&pi;n&sup2;t</sup></span>.</td>
+            <td><strong>False &amp; unbridged.</strong> All symmetric <span class="math">&alpha;</span>-stable Lévy kernels (<span class="math">0 &lt; &alpha; &le; 2</span>, e.g., Cauchy) are self-similar. Also omits the <span class="math">&minus;&frac12;</span> power in <span class="math">(4&pi;t)<sup>&minus;1/2</sup></span> and jumps from a log-line kernel with <span class="math">1/(4t)</span> to <span class="math">e<sup>&minus;&pi;n&sup2;t</sup></span> in linear <span class="math">n</span> with <span class="math">t</span> in the numerator.</td>
+            <td><span class="badge badge-new">Missed</span></td>
+          </tr>
+          <tr>
+            <td><strong>Part IV, &sect;4.2–4.3 &amp; Thm 5</strong><br><span class="err-loc">pp. 14–15</span></td>
+            <td>Completed <span class="math">&xi; = &pi;<sup>&minus;s/2</sup>&Gamma;(s/2)&zeta;</span> has trivial zeros at <span class="math">&minus;2, &minus;4, &hellip;</span>; poles of <span class="math">&Gamma;(s/2)</span> at <span class="math">s = 0, &minus;2, &minus;4, &hellip;</span> are all cancelled by trivial zeros of <span class="math">&zeta;</span>.</td>
+            <td><strong>Two errors.</strong> (1) At <span class="math">s=&minus;2</span>, <span class="math">&xi;(&minus;2) = &xi;(3) = &zeta;(3)/(2&pi;) &approx; 0.19131 &gt; 0</span> (nonzero!). (2) At <span class="math">s=0</span>, <span class="math">&zeta;(0) = &minus;&frac12; &ne; 0</span>, so <span class="math">&xi;(s) &sim; &minus;1/s</span> has an <strong>uncancelled simple pole</strong>.</td>
+            <td><span class="badge badge-warn">Caught (1)<br>Missed (2)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Part V, Thm 5.3</strong><br><span class="err-loc">p. 19</span></td>
+            <td>For <span class="math">&varepsilon; &lt; 0</span>, relative amplitude deviation of <span class="math">e<sup>&varepsilon;u</sup></span> is “unbounded” and “diverges.”</td>
+            <td><strong>False.</strong> For <span class="math">&varepsilon; &lt; 0</span>, <span class="math">|e<sup>&varepsilon;u</sup> &minus; 1| &rarr; 1</span> monotonically as <span class="math">u &rarr; &infin;</span>; it is strictly bounded by 1.</td>
+            <td><span class="badge badge-verified">Caught</span></td>
+          </tr>
+          <tr>
+            <td><strong>Part V, Thm 6</strong><br><span class="err-loc">p. 21</span></td>
+            <td>Non-fault-tolerance plus Parts I &amp; III force every nontrivial zero onto <span class="math"><span class="math-rm">Re</span>(s) = &frac12;</span>.</td>
+            <td><strong>Fatal circularity.</strong> Assumes “the reconstructing exponent of <span class="math">&zeta;</span> is <span class="math">&frac12;</span>” despite Parts I, III, and &sect;5.2 all deferring that exact claim to Part V.</td>
+            <td><span class="badge badge-verified">Caught</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Closer Look: The Five Compounding Errors in Part III (Pages 8–9)</h3>
+    <div class="error-list">
+      <div class="err-card">
+        <div class="err-head">
+          <span class="err-title">1. Lemma 3.4 silently deletes the factor u = log x</span>
+          <span class="err-loc">HDF_CRITICAL_EXPONENT.pdf, pp. 8–9</span>
+        </div>
+        <p>
+          Definition 3.3 sets <span class="math">H = &frac12;(uP + Pu) = &minus;i(u d/du + &frac12;)</span> where <span class="math">u = log x</span>.
+          Lemma 3.4 then writes: <em>“Since d/du = x d/dx under u = log x, the same operator is &minus;i(x d/dx + &frac12;).”</em>
+          Substituting <span class="math">d/du = x d/dx</span> into <span class="math">u d/du</span> yields <span class="math">(log x)&thinsp;x d/dx</span>, <strong>not</strong> <span class="math">x d/dx</span>.
+        </p>
+      </div>
+      <div class="err-card">
+        <div class="err-head">
+          <span class="err-title">2. Measure confusion destroys self-adjointness in Theorem 3</span>
+          <span class="err-loc">HDF_CRITICAL_EXPONENT.pdf, p. 9</span>
+        </div>
+        <p>
+          The Berry–Keating dilation operator <span class="math">&minus;i(x d/dx + &frac12;)</span> is self-adjoint on <strong>Lebesgue space</strong>
+          <span class="math">L&sup2;(&#8477;<sub>+</sub>, dx)</span> (where the unitary map <span class="math">f(x) &#8614; e<sup>u/2</sup>f(e<sup>u</sup>)</span> absorbs the <span class="math">+&frac12;</span>).
+          Okolo instead places it on <strong>Haar space</strong> <span class="math">L&sup2;(&#8477;<sub>+</sub>, dx/x)</span>, where <span class="math">u = log x</span> is directly isometric with no <span class="math">e<sup>u/2</sup></span> factor—leaving <span class="math">H = &minus;i d/du &minus; i/2</span> with imaginary expectation <span class="math">&minus;i/2</span>.
+          And even after fixing every algebra error to recover Berry–Keating (1999), its spectrum is the <em>entire continuous line</em> <span class="math">&#8477;</span>—proving nothing about the discrete zeros of <span class="math">&zeta;(s)</span>.
+        </p>
+      </div>
+    </div>
+
+    <div class="eq-block fail">
+      &langle;g, H g&rangle;<sub>L&sup2;(dx/x)</sub> = &int;<sub>&minus;&infin;</sub><sup>&infin;</sup> g(u) [&minus;i g&prime;(u) &minus; (i/2)g(u)] du = 0 &minus; i/2 = &minus;0.5i &notin; &#8477;
+      <span class="eq-caption">Exact expectation value for any real unit-norm test function g &isin; C<sub>c</sub><sup>&infin;</sup>(&#8477;), proving Theorem 3 false on L&sup2;(&#8477;<sub>+</sub>, dx/x).</span>
+    </div>
+
+    <div class="eq-block ok">
+      &xi;(&minus;2) = &xi;(3) = &pi;<sup>&minus;3/2</sup> &Gamma;(3/2) &zeta;(3) = &zeta;(3) / (2&pi;) &approx; 0.1913132980 &gt; 0,
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      &xi;(s) &sim; &minus;1/s &nbsp;as s &rarr; 0
+      <span class="eq-caption">Exact refutation of Theorem 5 (pp. 14–15): completed &xi;(s) does not vanish at s = &minus;2, and has an uncancelled simple pole at s = 0.</span>
+    </div>
+  </section>
+
+  <!-- SECTION 5 -->
+  <section id="alpoge">
+    <h2>5. Plagiarism Check vs. Levent Alpöge’s Lean-Verified Proof</h2>
+    <p>
+      In his November 24–25 X posts, Okolo alleges that Anthropic researcher Levent Alpöge plagiarized his “Primitive” via Claude and “turned it into theta lifts.” Comparing <a href="https://doi.org/10.5281/zenodo.21381824" target="_blank" rel="noopener">Okolo’s decrypted July 15 PDF</a> directly against <a href="https://alpo.ge/remark.pdf" target="_blank" rel="noopener">Alpöge’s announcement note</a> shows <strong>zero mathematical overlap</strong>:
+    </p>
+
+    <div class="compare-grid">
+      <div class="card left">
+        <h3>Okolo’s Manuscript (July 15, 2026)</h3>
+        <ul>
+          <li><strong>“Primitive”:</strong> Listing multiples <span class="math">(mk, k)</span>—the elementary Sieve of Eratosthenes / Dirichlet’s 1849 divisor lattice.</li>
+          <li><strong>Only mention of “theta”:</strong> One single sentence on p.&nbsp;14 citing Riemann’s <strong>1859</strong> 1D Jacobi theta inversion for <span class="math">&sum; e<sup>&minus;&pi;n&sup2;t</sup></span>.</li>
+          <li><strong>Core argument:</strong> Informal 22-page draft (with Part II missing) asserting circularly that spiral sensitivity forces <span class="math">Re(&rho;) = &frac12;</span>.</li>
+          <li><strong>Verification status:</strong> Fails basic mathematical checks (10 verified errors; no valid RH proof to borrow).</li>
+        </ul>
+      </div>
+      <div class="card right">
+        <h3>Alpöge’s Proof (Nov 20, 2026)</h3>
+        <ul>
+          <li><strong>Overarching method:</strong> Descendant of <strong>Stepanov’s polynomial method</strong> for Weil conjectures over finite fields, lifted to <span class="math">&#8484;</span>.</li>
+          <li><strong>Theta lifts:</strong> Chains of <span class="math">m &approx; &radic;X</span> <strong>iterated automorphic theta lifts</strong> <span class="math">U(X<sub>0</sub>) &rarr; U(X<sub>1</sub>) &rarr; &hellip; &rarr; U(X<sub>m</sub>)</span> between totally definite unitary groups (Howe’s theta correspondence) mimicking differentiation/multiplicity.</li>
+          <li><strong>Machinery:</strong> Kudla seesaw identities, Gross–Gan–Prasad / Bessel periods, 6-fold cover of <span class="math">GL<sub>5</sub></span>, Chowla–Selberg &amp; Siegel mass bounds, Bost’s Arakelov slope inequality, Iwasawa towers, weakened Vandiver conjecture.</li>
+          <li><strong>Verification status:</strong> 17M-line Lean 4 library independently certified by Lean FRO &amp; Mathlib Initiative via <code>nanoda</code>, <code>con-leche</code>, <code>con-ron</code>, and <code>lean4lean</code>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>
+      Equating Riemann’s 1859 1D Jacobi theta function with chains of <span class="math">&radic;X</span> automorphic theta lifts across unitary groups is purely a verbal pun on the word “theta.”
+    </p>
+  </section>
+
+  <!-- SECTION 6 -->
+  <section id="chatgpt">
+    <h2>6. Independent Check of ChatGPT’s Review PDF</h2>
+    <p>
+      Every technical claim in the circulated 4-page ChatGPT review (<code>Okolo_Riemann_Proof_Review.pdf</code>, C2PA-signed by <code>gpt-6-chat-pro</code> on Nov 25, 2026) held up under direct verification against the decrypted manuscript:
+    </p>
+    <ul>
+      <li><strong>Accurate:</strong> The core circularity in Theorem 6 (p.&nbsp;21), the negative-<span class="math">&varepsilon;</span> overstatement (p.&nbsp;19), the non-real expectation <span class="math">&minus;i/2</span> refuting self-adjointness on <span class="math">L&sup2;(dx/x)</span> (p.&nbsp;9), the nonzero completed value <span class="math">&Lambda;(&minus;2) = &zeta;(3)/(2&pi;) &gt; 0</span> (pp.&nbsp;14–15), and the lack of dependence in Alpöge’s proof.</li>
+      <li><strong>Where ChatGPT was incomplete (lenient):</strong> It missed 7 additional errors documented in Section 4—including Lemma 3.4’s dropped <span class="math">log x</span> factor, the <span class="math">Re(s)=0</span> vs. <span class="math">&frac12;</span> Haar-measure algebra error, the false Mellin eigenvalue, the wrong-sign/divergent <span class="math">V(t)</span> formula, the uncancelled simple pole at <span class="math">s=0</span>, the false uniqueness of the Gaussian scale-invariant kernel, and the false unique-factorization / <span class="math">|S|/k</span> claims in Part I.</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 7 -->
+  <section id="reproduce">
+    <h2>7. Reproducible Python Verification</h2>
+    <p>
+      Every numerical claim on this page is reproduced by <a href="verify.py"><code>verify.py</code></a> using only the Python 3 standard library (zero external packages). Run <code>python3 verify.py</code> to reproduce the exact output below:
+    </p>
+
+<pre><span class="hl-head">========================================================================
+INDEPENDENT MATHEMATICAL CHECKS ON OKOLO (JULY 15, 2026) MANUSCRIPT
+========================================================================</span>
+
+[1] Part I, Section 1.4 (p. 5): |S|/k vs log(d)/log(n)
+    n = 30 = 2*3*5 (k=3), divisor d = 5:
+    |S|/k        = 0.333333
+    log(d)/log(n)= 0.473197  <span class="hl-warn">(NOT equal; delta = 0.139864)</span>
+
+[2] Part III, Lemma 3.4 (pp. 8-9): dropped u = log(x) factor
+    Test function f(x) = x at x = e^2 (u = 2):
+    -i(u d/du + 1/2) f(x) = -18.472640i
+    -i(x d/dx + 1/2) f(x) = -11.083584i  <span class="hl-warn">(DIFFERENT operators!)</span>
+
+[3] Part III, Theorem 3 (p. 9): self-adjointness failure on L^2(R+, dx/x)
+    Real normalized g(u) = pi^(-1/4) exp(-u^2/2): ||g||^2 = 1.000000000000
+    &lt;g, H g&gt;_{dx/x} = +0.000000000000 -0.500000000000i  <span class="hl-warn">(exact: -0.5i, NOT real!)</span>
+
+[4] Part III, Section 3.4 (p. 11): V(t) = Im[-zeta'/zeta] sign &amp; prime-power check (at s = 2 + i)
+    True Im[-zeta'/zeta(2 + i)]           = -0.389478
+    Okolo formula +sum_p (log p)p^-2 sin  = +0.327400  <span class="hl-warn">(OPPOSITE sign + missing prime powers)</span>
+
+[5] Part IV, Theorem 5 (pp. 14-15): Completed zeta xi(s) = pi^(-s/2) Gamma(s/2) zeta(s)
+    xi(-2 + 1e-5)        = 0.1913147560  <span class="hl-warn">(NONZERO — trivial zero cancels pole!)</span>
+    xi(3) = zeta(3)/(2pi)= 0.1913132980  (exact: 0.1913132980)
+    eps * xi(eps) at 0   = -1.0000097691 <span class="hl-warn">(exact: -1.0 -&gt; SIMPLE POLE at s=0, not cancelled!)</span>
+
+[6] Part V, Theorem 5.3 (p. 19): negative-epsilon relative amplitude error |exp(eps*u) - 1|
+    eps = -0.01, u = 1000: |exp(eps*u) - 1| = 0.9999546001  <span class="hl-warn">(approaches 1, BOUNDED, not unbounded)</span>
+
+[7] Hard Counterexample: Davenport-Heilbronn function f(s)
+    Functional equation |Lambda_DH(s) - Lambda_DH(1-s)| at s=(0.73+4.2j): 4.578e-16
+    Off-line zero found:   rho     = 0.8085171825 + 85.6993484854i
+    Symmetric partner:     1 - rho = 0.1914828175 - 85.6993484854i  (conjugate: 0.1914828175 + 85.6993484854i)
+    |f(rho)| = 3.409e-14,  |f(1 - rho)| = 2.224e-13
+
+<span class="hl-pass">ALL 7 INDEPENDENT MATHEMATICAL CHECKS PASSED.</span></pre>
+  </section>
+
+  <!-- SUMMARY -->
+  <section id="summary" class="summary-box">
+    <h2>Summary</h2>
+    <ul>
+      <li><strong>Did Okolo solve the Riemann Hypothesis?</strong> No. Theorem 6 (p.&nbsp;21) of his decrypted July 15, 2026 Zenodo manuscript (<code>DOI 10.5281/zenodo.21381824</code>) begs the question by assuming the reconstructing exponent of <span class="math">&zeta;(s)</span> is <span class="math">&frac12;</span>. Both Davenport–Heilbronn / Epstein zeta functions (exact functional equation, off-line zeros) and Beurling primes (exact unique factorization, violating RH) refute the proof strategy outright.</li>
+      <li><strong>Concrete technical defects:</strong> Independent verification confirmed all 4 errors noted in ChatGPT’s review and uncovered 7 additional errors across Parts I, III, and IV (including Lemma 3.4’s dropped <span class="math">log x</span> factor, false Haar-modulus exponent, wrong Mellin eigenvalue, wrong-sign/divergent <span class="math">V(t)</span>, uncancelled simple pole at <span class="math">s = 0</span>, and false Gaussian uniqueness).</li>
+      <li><strong>Plagiarism claim against Levent Alpöge:</strong> Unfounded. Okolo mentions “theta” once (Riemann’s 1859 1D Jacobi theta function); Alpöge’s Lean-verified proof uses chains of <span class="math">&radic;X</span> iterated automorphic theta lifts between totally definite unitary groups.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <div>Primary sources: <a href="https://doi.org/10.5281/zenodo.21381824" target="_blank" rel="noopener">Zenodo 21381824</a> &middot; <a href="https://alpo.ge/remark.pdf" target="_blank" rel="noopener">alpo.ge/remark.pdf</a> &middot; <a href="https://leanprover-community.github.io/blog/posts/riemann-hypothesis/" target="_blank" rel="noopener">Lean FRO Certification</a></div>
+    <div><a href="https://github.com/phenomenon0/okolo-rh-review" target="_blank" rel="noopener">Source &amp; verify.py on GitHub</a></div>
+  </footer>
+</div>
+
+<script>
+function copyShareUrl() {
+  const btn = document.getElementById('copyBtn');
+  const url = window.location.href;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => {
+      btn.textContent = 'Link Copied!';
+      setTimeout(() => { btn.textContent = 'Copy Share Link'; }, 2000);
+    });
+  } else {
+    prompt('Copy link:', url);
+  }
+}
+</script>
+</body>
+</html>
